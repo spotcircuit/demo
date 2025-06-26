@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -646,8 +645,9 @@
         // Handle radio button styling
         document.querySelectorAll('input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', function() {
-                // Remove selected class from all items in this group
-                document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+                // Remove selected class from all items in THIS specific group only
+                const groupName = this.name;
+                document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
                     r.closest('.radio-item').classList.remove('selected');
                 });
                 // Add selected class to current item
