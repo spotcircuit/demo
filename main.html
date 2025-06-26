@@ -1,1 +1,757 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment Tech Discovery - Interactive Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: #e0e6ed;
+            z-index: 1000;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db 0%, #2ecc71 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .form-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: none;
+            animation: slideIn 0.4s ease;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            text-align: center;
+        }
+        
+        h2 {
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .question-group {
+            margin-bottom: 30px;
+        }
+        
+        .question-label {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        .checkbox-group, .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .checkbox-item, .radio-item {
+            background: #f8f9fa;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-item:hover, .radio-item:hover {
+            border-color: #3498db;
+            background: #f0f7ff;
+        }
+        
+        .checkbox-item.selected, .radio-item.selected {
+            border-color: #3498db;
+            background: #e8f4ff;
+        }
+        
+        .checkbox-item input, .radio-item input {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .text-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .textarea-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        .textarea-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .scale-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .scale-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 10px;
+            flex: 1;
+        }
+        
+        .scale-number {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e0e6ed;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        .scale-item:hover .scale-number {
+            border-color: #3498db;
+            transform: scale(1.1);
+        }
+        
+        .scale-item.selected .scale-number {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 20px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+        
+        .btn-secondary {
+            background: #e0e6ed;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #d0d6dd;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-submit {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background: #229954;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .cost-display {
+            background: #fee;
+            border: 2px solid #e74c3c;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .cost-amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .success-message h2 {
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressBar"></div>
+    </div>
+
+    <div class="container">
+        <form id="discoveryForm">
+            <!-- Section 1: Current Tools -->
+            <div class="form-section active" data-section="1">
+                <h1>Let's Understand Your Current Setup</h1>
+                
+                <div class="question-group">
+                    <div class="question-label">Which tools are you currently using? (Check all that apply)</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="current_tools" value="PC Recruiter">
+                            <span>PC Recruiter (ATS)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="current_tools" value="Source Whale">
+                            <span>Source Whale (Sequencing)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="current_tools" value="Zoom Info">
+                            <span>Zoom Info (Contact Finding)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="current_tools" value="Monday.com">
+                            <span>Monday.com (Dashboards)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="current_tools" value="HubSpot">
+                            <span>HubSpot</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="current_tools" value="LinkedIn Recruiter">
+                            <span>LinkedIn Recruiter</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="current_tools" value="Other">
+                            <span>Other CRM/ATS</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <div class="question-label">Estimated annual cost of all tools combined:</div>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="annual_cost" value="<50k">
+                            <span>Less than $50,000</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="annual_cost" value="50-100k">
+                            <span>$50,000 - $100,000</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="annual_cost" value="100-200k">
+                            <span>$100,000 - $200,000</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="annual_cost" value=">200k">
+                            <span>More than $200,000</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Section 2: Pain Points -->
+            <div class="form-section" data-section="2">
+                <h1>What's Frustrating Your Team?</h1>
+                
+                <div class="question-group">
+                    <div class="question-label">How many different logins do recruiters use daily?</div>
+                    <div class="radio-group">
+                        <label class="radio-item">
+                            <input type="radio" name="login_count" value="1-3">
+                            <span>1-3 logins</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="login_count" value="4-6">
+                            <span>4-6 logins</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="login_count" value="7-10">
+                            <span>7-10 logins</span>
+                        </label>
+                        <label class="radio-item">
+                            <input type="radio" name="login_count" value=">10">
+                            <span>More than 10 logins</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <div class="question-label">Rate your biggest pain points (1 = Not a problem, 5 = Major issue)</div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <p style="margin-bottom: 10px;">Logging into multiple systems:</p>
+                        <div class="scale-group">
+                            <div class="scale-item" onclick="selectScale('pain_logins', 1)">
+                                <div class="scale-number">1</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_logins', 2)">
+                                <div class="scale-number">2</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_logins', 3)">
+                                <div class="scale-number">3</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_logins', 4)">
+                                <div class="scale-number">4</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_logins', 5)">
+                                <div class="scale-number">5</div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="pain_logins" id="pain_logins">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <p style="margin-bottom: 10px;">Copy-pasting between tools:</p>
+                        <div class="scale-group">
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 1)">
+                                <div class="scale-number">1</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 2)">
+                                <div class="scale-number">2</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 3)">
+                                <div class="scale-number">3</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 4)">
+                                <div class="scale-number">4</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 5)">
+                                <div class="scale-number">5</div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="pain_copypaste" id="pain_copypaste">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <p style="margin-bottom: 10px;">Paying for overlapping features:</p>
+                        <div class="scale-group">
+                            <div class="scale-item" onclick="selectScale('pain_cost', 1)">
+                                <div class="scale-number">1</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_cost', 2)">
+                                <div class="scale-number">2</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_cost', 3)">
+                                <div class="scale-number">3</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_cost', 4)">
+                                <div class="scale-number">4</div>
+                            </div>
+                            <div class="scale-item" onclick="selectScale('pain_cost', 5)">
+                                <div class="scale-number">5</div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="pain_cost" id="pain_cost">
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button type="button" class="btn btn-secondary" onclick="previousSection()">← Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Section 3: Priorities -->
+            <div class="form-section" data-section="3">
+                <h1>What Are Your Priorities?</h1>
+                
+                <div class="question-group">
+                    <div class="question-label">What MUST work on Day 1? (Check all that apply)</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="day1_requirements" value="ATS functionality">
+                            <span>All current ATS functionality</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="day1_requirements" value="Contact finding">
+                            <span>Contact finding (like Zoom Info)</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="day1_requirements" value="Email sequencing">
+                            <span>Email/LinkedIn sequencing</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="day1_requirements" value="Calendar sync">
+                            <span>Calendar & email sync</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="day1_requirements" value="Reporting">
+                            <span>Basic reporting & dashboards</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="day1_requirements" value="Phone integration">
+                            <span>Phone system integration</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="question-group">
+                    <div class="question-label">Which features can be phased in later?</div>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="phase2_features" value="Client portals">
+                            <span>Client login portals</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="phase2_features" value="Candidate portals">
+                            <span>Candidate self-service portals</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="phase2_features" value="AI matching">
+                            <span>AI-powered candidate matching</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="phase2_features" value="Automated BD">
+                            <span>Automated BD campaigns</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="phase2_features" value="Real-time coaching">
+                            <span>Real-time AI coaching</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button type="button" class="btn btn-secondary" onclick="previousSection()">← Back</button>
+                    <button type="button" class="btn btn-primary" onclick="nextSection()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Section 4: Contact Info -->
+            <div class="form-section" data-section="4">
+                <h1>Let's Connect!</h1>
+                
+                <div class="question-group">
+                    <div class="question-label">Your Information</div>
+                    <input type="text" name="company_name" class="text-input" placeholder="Company Name" required style="margin-bottom: 15px;">
+                    <input type="text" name="contact_name" class="text-input" placeholder="Your Name" required style="margin-bottom: 15px;">
+                    <input type="email" name="email" class="text-input" placeholder="Email Address" required style="margin-bottom: 15px;">
+                    <input type="tel" name="phone" class="text-input" placeholder="Phone Number" style="margin-bottom: 15px;">
+                </div>
+
+                <div class="question-group">
+                    <div class="question-label">Number of recruiters on your team:</div>
+                    <input type="number" name="team_size" class="text-input" placeholder="e.g., 45" required>
+                </div>
+
+                <div class="question-group">
+                    <div class="question-label">Anything else we should know?</div>
+                    <textarea name="additional_info" class="textarea-input" placeholder="Tell us about your specific challenges or goals..."></textarea>
+                </div>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="loading" id="loadingSpinner">
+                    <div class="spinner"></div>
+                    <p>Submitting your responses...</p>
+                </div>
+
+                <div class="navigation">
+                    <button type="button" class="btn btn-secondary" onclick="previousSection()">← Back</button>
+                    <button type="submit" class="btn btn-submit">Submit & Get Your Custom Plan</button>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div class="success-message" id="successMessage">
+                <h2>✅ Thank You!</h2>
+                <p>We've received your information and will create a custom implementation plan for you.</p>
+                <p style="margin-top: 20px;">Expect to hear from us within 24 hours with:</p>
+                <ul style="text-align: left; margin: 20px auto; max-width: 400px;">
+                    <li>Your personalized tech stack recommendation</li>
+                    <li>Projected cost savings analysis</li>
+                    <li>Implementation timeline</li>
+                    <li>Live demo scheduling options</li>
+                </ul>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 4;
+
+        // Update progress bar
+        function updateProgress() {
+            const progress = (currentSection / totalSections) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Navigate between sections
+        function showSection(sectionNumber) {
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            const targetSection = document.querySelector(`[data-section="${sectionNumber}"]`);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections) {
+                currentSection++;
+                showSection(currentSection);
+            }
+        }
+
+        function previousSection() {
+            if (currentSection > 1) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        }
+
+        // Handle checkbox styling
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.closest('.checkbox-item').classList.add('selected');
+                } else {
+                    this.closest('.checkbox-item').classList.remove('selected');
+                }
+            });
+        });
+
+        // Handle radio button styling
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Remove selected class from all items in this group
+                document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+                    r.closest('.radio-item').classList.remove('selected');
+                });
+                // Add selected class to current item
+                this.closest('.radio-item').classList.add('selected');
+            });
+        });
+
+        // Handle scale selection
+        function selectScale(fieldName, value) {
+            // Update hidden input
+            document.getElementById(fieldName).value = value;
+            
+            // Update visual selection
+            const scaleItems = document.querySelectorAll(`#${fieldName}`).item(0)
+                .closest('.question-group').querySelectorAll('.scale-item');
+            
+            scaleItems.forEach((item, index) => {
+                if (index + 1 === value) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        // Form submission
+        document.getElementById('discoveryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Show loading spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Collect all form data
+            const formData = new FormData(this);
+            
+            // Get checkbox values as arrays
+            const currentTools = [];
+            document.querySelectorAll('input[name="current_tools"]:checked').forEach(cb => {
+                currentTools.push(cb.value);
+            });
+            
+            const day1Requirements = [];
+            document.querySelectorAll('input[name="day1_requirements"]:checked').forEach(cb => {
+                day1Requirements.push(cb.value);
+            });
+            
+            const phase2Features = [];
+            document.querySelectorAll('input[name="phase2_features"]:checked').forEach(cb => {
+                phase2Features.push(cb.value);
+            });
+
+            // Create structured data object
+            const data = {
+                timestamp: new Date().toISOString(),
+                company: formData.get('company_name'),
+                contact: formData.get('contact_name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                teamSize: formData.get('team_size'),
+                currentTools: currentTools.join(', '),
+                annualCost: formData.get('annual_cost'),
+                loginCount: formData.get('login_count'),
+                painLogins: formData.get('pain_logins'),
+                painCopyPaste: formData.get('pain_copypaste'),
+                painCost: formData.get('pain_cost'),
+                day1Requirements: day1Requirements.join(', '),
+                phase2Features: phase2Features.join(', '),
+                additionalInfo: formData.get('additional_info')
+            };
+
+            try {
+                // Send to Google Sheets via Apps Script
+                const GOOGLE_SCRIPT_URL = 'https://script.google.com/a/macros/spotcircuit.com/s/AKfycbxn_G_g7BRnMPJQw2ddwe6QFEejrg0IPkMrpW1LCw2J5XZgyL9mgqJR9VCSya7kL7II/exec';
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                // Log for debugging
+                console.log('Form Data Sent:', data);
+                
+                // Show success message
+                document.querySelector('.form-section.active').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                // You could also send this to a webhook, Zapier, etc.
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').textContent = 'There was an error submitting your form. Please try again.';
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+        });
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>
