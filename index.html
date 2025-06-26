@@ -408,20 +408,20 @@
                     
                     <div style="margin-bottom: 20px;">
                         <p style="margin-bottom: 10px;">Logging into multiple systems:</p>
-                        <div class="scale-group">
-                            <div class="scale-item" onclick="selectScale('pain_logins', 1)">
+                        <div class="scale-group" data-field="pain_logins">
+                            <div class="scale-item" onclick="selectScale('pain_logins', 1, this)">
                                 <div class="scale-number">1</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_logins', 2)">
+                            <div class="scale-item" onclick="selectScale('pain_logins', 2, this)">
                                 <div class="scale-number">2</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_logins', 3)">
+                            <div class="scale-item" onclick="selectScale('pain_logins', 3, this)">
                                 <div class="scale-number">3</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_logins', 4)">
+                            <div class="scale-item" onclick="selectScale('pain_logins', 4, this)">
                                 <div class="scale-number">4</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_logins', 5)">
+                            <div class="scale-item" onclick="selectScale('pain_logins', 5, this)">
                                 <div class="scale-number">5</div>
                             </div>
                         </div>
@@ -430,20 +430,20 @@
 
                     <div style="margin-bottom: 20px;">
                         <p style="margin-bottom: 10px;">Copy-pasting between tools:</p>
-                        <div class="scale-group">
-                            <div class="scale-item" onclick="selectScale('pain_copypaste', 1)">
+                        <div class="scale-group" data-field="pain_copypaste">
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 1, this)">
                                 <div class="scale-number">1</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_copypaste', 2)">
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 2, this)">
                                 <div class="scale-number">2</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_copypaste', 3)">
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 3, this)">
                                 <div class="scale-number">3</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_copypaste', 4)">
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 4, this)">
                                 <div class="scale-number">4</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_copypaste', 5)">
+                            <div class="scale-item" onclick="selectScale('pain_copypaste', 5, this)">
                                 <div class="scale-number">5</div>
                             </div>
                         </div>
@@ -452,20 +452,20 @@
 
                     <div style="margin-bottom: 20px;">
                         <p style="margin-bottom: 10px;">Paying for overlapping features:</p>
-                        <div class="scale-group">
-                            <div class="scale-item" onclick="selectScale('pain_cost', 1)">
+                        <div class="scale-group" data-field="pain_cost">
+                            <div class="scale-item" onclick="selectScale('pain_cost', 1, this)">
                                 <div class="scale-number">1</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_cost', 2)">
+                            <div class="scale-item" onclick="selectScale('pain_cost', 2, this)">
                                 <div class="scale-number">2</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_cost', 3)">
+                            <div class="scale-item" onclick="selectScale('pain_cost', 3, this)">
                                 <div class="scale-number">3</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_cost', 4)">
+                            <div class="scale-item" onclick="selectScale('pain_cost', 4, this)">
                                 <div class="scale-number">4</div>
                             </div>
-                            <div class="scale-item" onclick="selectScale('pain_cost', 5)">
+                            <div class="scale-item" onclick="selectScale('pain_cost', 5, this)">
                                 <div class="scale-number">5</div>
                             </div>
                         </div>
@@ -656,21 +656,21 @@
         });
 
         // Handle scale selection
-        function selectScale(fieldName, value) {
+        function selectScale(fieldName, value, clickedElement) {
             // Update hidden input
             document.getElementById(fieldName).value = value;
             
-            // Update visual selection
-            const scaleItems = document.querySelectorAll(`#${fieldName}`).item(0)
-                .closest('.question-group').querySelectorAll('.scale-item');
+            // Find only the scale items in this specific group
+            const scaleGroup = clickedElement.closest('.scale-group');
+            const scaleItems = scaleGroup.querySelectorAll('.scale-item');
             
-            scaleItems.forEach((item, index) => {
-                if (index + 1 === value) {
-                    item.classList.add('selected');
-                } else {
-                    item.classList.remove('selected');
-                }
+            // Update visual selection for only this scale group
+            scaleItems.forEach((item) => {
+                item.classList.remove('selected');
             });
+            
+            // Add selected class to clicked item
+            clickedElement.classList.add('selected');
         }
 
         // Form submission
