@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment Tool Audit - Interactive Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .progress-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .progress-bar {
+            background: #ecf0f1;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #3498db 0%, #2ecc71 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .tool-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: none;
+        }
+        
+        .tool-section.active {
+            display: block;
+        }
+        
+        .tool-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .tool-name {
+            font-size: 1.8rem;
+            color: #2c3e50;
+        }
+        
+        .cost-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .cost-input {
+            padding: 8px 12px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 150px;
+        }
+        
+        .question-block {
+            margin-bottom: 30px;
+        }
+        
+        .question-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 10px;
+        }
+        
+        .feature-item {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .feature-item:hover {
+            background: #e8f4ff;
+            border-color: #3498db;
+        }
+        
+        .feature-item.selected {
+            background: #d4f1d4;
+            border-color: #27ae60;
+        }
+        
+        .feature-item.overlap {
+            background: #ffe6e6;
+            border-color: #e74c3c;
+        }
+        
+        .feature-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        
+        .feature-label {
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .overlap-indicator {
+            background: #e74c3c;
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            display: none;
+        }
+        
+        .feature-item.overlap .overlap-indicator {
+            display: inline-block;
+        }
+        
+        .usage-stats {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #333;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .results-section {
+            display: none;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin-top: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .results-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .waste-amount {
+            font-size: 3rem;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .overlap-summary {
+            background: #fee;
+            border: 2px solid #e74c3c;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .overlap-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #f5c6c6;
+        }
+        
+        .overlap-item:last-child {
+            border-bottom: none;
+        }
+        
+        .recommendation-box {
+            background: #d4f1d4;
+            border: 2px solid #27ae60;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .usage-chart {
+            display: flex;
+            height: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .usage-used {
+            background: #27ae60;
+        }
+        
+        .usage-unused {
+            background: #e74c3c;
+        }
+        
+        .pre-check-note {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #856404;
+        }
+        
+        .seats-input-group {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .seats-input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Recruitment Tool Audit</h1>
+            <p>Let's discover what you're really using (and paying for)</p>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <p id="progressText">Step 1 of 4: PC Recruiter Assessment</p>
+        </div>
+
+        <!-- Tool 1: PC Recruiter -->
+        <div class="tool-section active" data-tool="pcrecruiter">
+            <div class="tool-header">
+                <h2 class="tool-name">PC Recruiter (ATS)</h2>
+                <div class="cost-input-group">
+                    <label>Annual Cost: $</label>
+                    <input type="number" class="cost-input" id="pcrecruiter-cost" value="30000">
+                </div>
+            </div>
+            
+            <div class="seats-input-group">
+                <label>Number of users/seats:</label>
+                <input type="number" class="seats-input" id="pcrecruiter-seats" value="45">
+            </div>
+
+            <div class="pre-check-note">
+                We've pre-checked what we think you're using based on typical usage patterns. Uncheck anything you don't use, and check anything we missed!
+            </div>
+
+            <div class="question-block">
+                <h3 class="question-title">Which PC Recruiter features do you actually use?</h3>
+                <div class="feature-grid">
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="candidate-database" checked>
+                        <span class="feature-label">Candidate Database Storage</span>
+                    </label>
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="job-posting" checked>
+                        <span class="feature-label">Job Posting Management</span>
+                    </label>
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="resume-parsing" checked>
+                        <span class="feature-label">Resume Parsing</span>
+                    </label>
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="basic-search" checked>
+                        <span class="feature-label">Basic Keyword Search</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="email-campaigns">
+                        <span class="feature-label">Email Campaign Builder</span>
+                        <span class="overlap-indicator">Also in Source Whale</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="automation-workflows">
+                        <span class="feature-label">Automation Workflows</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="reporting-analytics">
+                        <span class="feature-label">Advanced Analytics & Reporting</span>
+                        <span class="overlap-indicator">Also in Monday.com</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="api-integrations">
+                        <span class="feature-label">API Integrations</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="custom-fields">
+                        <span class="feature-label">Custom Fields & Forms</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="client-portal">
+                        <span class="feature-label">Client Portal Access</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="mobile-app">
+                        <span class="feature-label">Mobile App</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="social-recruiting">
+                        <span class="feature-label">Social Media Recruiting</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="usage-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="pcrecruiter-usage">33%</div>
+                    <div class="stat-label">Features Used</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="pcrecruiter-overlap">2</div>
+                    <div class="stat-label">Overlapping Features</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="pcrecruiter-waste">$20,000</div>
+                    <div class="stat-label">Potential Waste</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" disabled>Previous</button>
+                <button class="btn btn-primary" onclick="nextTool()">Next Tool →</button>
+            </div>
+        </div>
+
+        <!-- Tool 2: Zoom Info -->
+        <div class="tool-section" data-tool="zoominfo">
+            <div class="tool-header">
+                <h2 class="tool-name">Zoom Info</h2>
+                <div class="cost-input-group">
+                    <label>Annual Cost: $</label>
+                    <input type="number" class="cost-input" id="zoominfo-cost" value="80000">
+                </div>
+            </div>
+            
+            <div class="seats-input-group">
+                <label>Number of users/seats:</label>
+                <input type="number" class="seats-input" id="zoominfo-seats" value="60">
+            </div>
+
+            <div class="pre-check-note">
+                Based on typical usage, we've selected what most teams actually use. Adjust as needed!
+            </div>
+
+            <div class="question-block">
+                <h3 class="question-title">Which Zoom Info features do you actually use?</h3>
+                <div class="feature-grid">
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="contact-search" checked>
+                        <span class="feature-label">Basic Contact Search (Email/Phone)</span>
+                    </label>
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="chrome-extension" checked>
+                        <span class="feature-label">Chrome Extension</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="advanced-filters">
+                        <span class="feature-label">Advanced Search Filters</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="intent-data">
+                        <span class="feature-label">Intent Data & Buying Signals</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="org-charts">
+                        <span class="feature-label">Organizational Charts</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="technographics">
+                        <span class="feature-label">Technographics Data</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="engagement-scoring">
+                        <span class="feature-label">Engagement Scoring</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="list-building">
+                        <span class="feature-label">Automated List Building</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="data-enrichment">
+                        <span class="feature-label">Bulk Data Enrichment</span>
+                        <span class="overlap-indicator">Also in Source Whale</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="workflow-integration">
+                        <span class="feature-label">Workflow Integrations</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="websights">
+                        <span class="feature-label">WebSights (Website Visitor Tracking)</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="data-api">
+                        <span class="feature-label">Data API Access</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="usage-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="zoominfo-usage">17%</div>
+                    <div class="stat-label">Features Used</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="zoominfo-overlap">1</div>
+                    <div class="stat-label">Overlapping Features</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="zoominfo-waste">$66,400</div>
+                    <div class="stat-label">Potential Waste</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="previousTool()">← Previous</button>
+                <button class="btn btn-primary" onclick="nextTool()">Next Tool →</button>
+            </div>
+        </div>
+
+        <!-- Tool 3: Source Whale -->
+        <div class="tool-section" data-tool="sourcewhale">
+            <div class="tool-header">
+                <h2 class="tool-name">Source Whale</h2>
+                <div class="cost-input-group">
+                    <label>Annual Cost: $</label>
+                    <input type="number" class="cost-input" id="sourcewhale-cost" value="40000">
+                </div>
+            </div>
+            
+            <div class="seats-input-group">
+                <label>Number of users/seats:</label>
+                <input type="number" class="seats-input" id="sourcewhale-seats" value="45">
+            </div>
+
+            <div class="pre-check-note">
+                Most teams use Source Whale for basic sequences. Let us know if you use advanced features!
+            </div>
+
+            <div class="question-block">
+                <h3 class="question-title">Which Source Whale features do you actually use?</h3>
+                <div class="feature-grid">
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="email-sequences" checked>
+                        <span class="feature-label">Basic Email Sequences</span>
+                    </label>
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="linkedin-messages" checked>
+                        <span class="feature-label">LinkedIn Message Templates</span>
+                    </label>
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="simple-followup" checked>
+                        <span class="feature-label">Simple Follow-up Automation</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="ab-testing">
+                        <span class="feature-label">A/B Testing Campaigns</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="advanced-personalization">
+                        <span class="feature-label">Advanced Personalization</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="multi-channel">
+                        <span class="feature-label">Multi-channel Campaigns (SMS, Phone)</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="detailed-analytics">
+                        <span class="feature-label">Detailed Analytics & Reports</span>
+                        <span class="overlap-indicator">Also in Monday.com</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="dynamic-content">
+                        <span class="feature-label">Dynamic Content Variables</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="team-collaboration">
+                        <span class="feature-label">Team Collaboration Features</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="contact-enrichment">
+                        <span class="feature-label">Contact Data Enrichment</span>
+                        <span class="overlap-indicator">Also in Zoom Info</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="crm-sync">
+                        <span class="feature-label">CRM Sync & Updates</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="compliance-tools">
+                        <span class="feature-label">GDPR Compliance Tools</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="usage-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="sourcewhale-usage">25%</div>
+                    <div class="stat-label">Features Used</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="sourcewhale-overlap">2</div>
+                    <div class="stat-label">Overlapping Features</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="sourcewhale-waste">$30,000</div>
+                    <div class="stat-label">Potential Waste</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="previousTool()">← Previous</button>
+                <button class="btn btn-primary" onclick="nextTool()">Next Tool →</button>
+            </div>
+        </div>
+
+        <!-- Tool 4: Monday.com -->
+        <div class="tool-section" data-tool="monday">
+            <div class="tool-header">
+                <h2 class="tool-name">Monday.com</h2>
+                <div class="cost-input-group">
+                    <label>Annual Cost: $</label>
+                    <input type="number" class="cost-input" id="monday-cost" value="30000">
+                </div>
+            </div>
+            
+            <div class="seats-input-group">
+                <label>Number of users/seats:</label>
+                <input type="number" class="seats-input" id="monday-seats" value="45">
+            </div>
+
+            <div class="pre-check-note">
+                Monday.com has tons of features. Most recruiting teams use it as a visual pipeline. What about you?
+            </div>
+
+            <div class="question-block">
+                <h3 class="question-title">Which Monday.com features do you actually use?</h3>
+                <div class="feature-grid">
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="pipeline-view" checked>
+                        <span class="feature-label">Basic Pipeline/Board View</span>
+                    </label>
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="status-updates" checked>
+                        <span class="feature-label">Manual Status Updates</span>
+                    </label>
+                    <label class="feature-item selected">
+                        <input type="checkbox" class="feature-checkbox" data-feature="simple-dashboards" checked>
+                        <span class="feature-label">Simple Dashboards</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="automations">
+                        <span class="feature-label">Workflow Automations</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="custom-integrations">
+                        <span class="feature-label">Custom Integrations</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="advanced-reporting">
+                        <span class="feature-label">Advanced Analytics</span>
+                        <span class="overlap-indicator">Also in PC Recruiter</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="time-tracking">
+                        <span class="feature-label">Time Tracking</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="forms-surveys">
+                        <span class="feature-label">Forms & Surveys</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="gantt-charts">
+                        <span class="feature-label">Gantt Charts & Timeline</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="workload-view">
+                        <span class="feature-label">Workload Management</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="api-access">
+                        <span class="feature-label">API Access</span>
+                    </label>
+                    <label class="feature-item">
+                        <input type="checkbox" class="feature-checkbox" data-feature="mobile-app">
+                        <span class="feature-label">Mobile App</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="usage-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="monday-usage">25%</div>
+                    <div class="stat-label">Features Used</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="monday-overlap">1</div>
+                    <div class="stat-label">Overlapping Features</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="monday-waste">$22,500</div>
+                    <div class="stat-label">Potential Waste</div>
+                </div>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-secondary" onclick="previousTool()">← Previous</button>
+                <button class="btn btn-primary" onclick="showResults()">See Your Results →</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2>Your Tool Audit Results</h2>
+                <p>Here's what we discovered about your tool usage...</p>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <p style="font-size: 1.2rem; color: #7f8c8d;">Total Annual Tool Spend</p>
+                <div class="waste-amount" id="totalSpend">$180,000</div>
+                <p style="font-size: 1.2rem; color: #7f8c8d; margin-top: 20px;">You're wasting approximately</p>
+                <div class="waste-amount" id="totalWaste">$138,900</div>
+                <p style="color: #e74c3c;">That's <span id="wastePercentage">77%</span> of your budget!</p>
+            </div>
+
+            <div id="toolBreakdown"></div>
+
+            <div class="overlap-summary">
+                <h3>🔄 Overlapping Features You're Paying For Multiple Times</h3>
+                <div id="overlapList"></div>
+            </div>
+
+            <div class="recommendation-box">
+                <h3>✅ Our Recommendation</h3>
+                <p><strong>Immediate Action:</strong> You could save <span id="immediateSavings">$100,000+</span> per year by consolidating to a unified platform that includes only the features you actually use.</p>
+                <ul style="margin-top: 15px; padding-left: 20px;">
+                    <li>Keep the 20-30% of features you actually use</li>
+                    <li>Eliminate duplicate functionality</li>
+                    <li>Add automation to reduce manual work</li>
+                    <li>Single login for everything</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin: 40px 0;">
+                <h3>Ready to stop wasting money on unused features?</h3>
+                <button class="btn btn-primary" style="font-size: 1.2rem; padding: 15px 40px; margin-top: 20px;" onclick="exportResults()">
+                    Download Full Report & Get Custom Solution
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTool = 0;
+        const tools = ['pcrecruiter', 'zoominfo', 'sourcewhale', 'monday'];
+        const toolNames = {
+            'pcrecruiter': 'PC Recruiter',
+            'zoominfo': 'Zoom Info',
+            'sourcewhale': 'Source Whale',
+            'monday': 'Monday.com'
+        };
+
+        // Feature overlap mappings
+        const overlapMap = {
+            'email-campaigns': ['PC Recruiter', 'Source Whale'],
+            'reporting-analytics': ['PC Recruiter', 'Monday.com'],
+            'advanced-reporting': ['PC Recruiter', 'Monday.com'],
+            'data-enrichment': ['Zoom Info', 'Source Whale'],
+            'contact-enrichment': ['Zoom Info', 'Source Whale'],
+            'detailed-analytics': ['Source Whale', 'Monday.com']
+        };
+
+        // Initialize all checkboxes with event listeners
+        document.querySelectorAll('.feature-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const featureItem = this.closest('.feature-item');
+                if (this.checked) {
+                    featureItem.classList.add('selected');
+                } else {
+                    featureItem.classList.remove('selected');
+                }
+                updateToolStats();
+                
+                // Check for overlaps
+                const feature = this.dataset.feature;
+                if (overlapMap[feature] && this.checked) {
+                    featureItem.classList.add('overlap');
+                } else {
+                    featureItem.classList.remove('overlap');
+                }
+            });
+        });
+
+        // Cost input listeners
+        document.querySelectorAll('.cost-input, .seats-input').forEach(input => {
+            input.addEventListener('input', updateToolStats);
+        });
+
+        function updateToolStats() {
+            tools.forEach(tool => {
+                const section = document.querySelector(`[data-tool="${tool}"]`);
+                if (!section) return;
+
+                const totalFeatures = section.querySelectorAll('.feature-checkbox').length;
+                const usedFeatures = section.querySelectorAll('.feature-checkbox:checked').length;
+                const usagePercent = Math.round((usedFeatures / totalFeatures) * 100);
+                
+                const cost = parseFloat(document.getElementById(`${tool}-cost`).value) || 0;
+                const waste = Math.round(cost * (1 - usedFeatures / totalFeatures));
+                
+                // Count overlaps
+                let overlapCount = 0;
+                section.querySelectorAll('.feature-checkbox:checked').forEach(cb => {
+                    if (overlapMap[cb.dataset.feature]) {
+                        overlapCount++;
+                    }
+                });
+
+                // Update display
+                const usageEl = document.getElementById(`${tool}-usage`);
+                const overlapEl = document.getElementById(`${tool}-overlap`);
+                const wasteEl = document.getElementById(`${tool}-waste`);
+                
+                if (usageEl) usageEl.textContent = `${usagePercent}%`;
+                if (overlapEl) overlapEl.textContent = overlapCount;
+                if (wasteEl) wasteEl.textContent = `$${waste.toLocaleString()}`;
+            });
+        }
+
+        function updateProgress() {
+            const progress = ((currentTool + 1) / tools.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = 
+                `Step ${currentTool + 1} of ${tools.length}: ${toolNames[tools[currentTool]]} Assessment`;
+        }
+
+        function nextTool() {
+            if (currentTool < tools.length - 1) {
+                document.querySelector(`[data-tool="${tools[currentTool]}"]`).classList.remove('active');
+                currentTool++;
+                document.querySelector(`[data-tool="${tools[currentTool]}"]`).classList.add('active');
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function previousTool() {
+            if (currentTool > 0) {
+                document.querySelector(`[data-tool="${tools[currentTool]}"]`).classList.remove('active');
+                currentTool--;
+                document.querySelector(`[data-tool="${tools[currentTool]}"]`).classList.add('active');
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function showResults() {
+            document.querySelector(`[data-tool="${tools[currentTool]}"]`).classList.remove('active');
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // Calculate totals
+            let totalCost = 0;
+            let totalWaste = 0;
+            let breakdownHTML = '';
+            
+            tools.forEach(tool => {
+                const cost = parseFloat(document.getElementById(`${tool}-cost`).value) || 0;
+                const section = document.querySelector(`[data-tool="${tool}"]`);
+                const totalFeatures = section.querySelectorAll('.feature-checkbox').length;
+                const usedFeatures = section.querySelectorAll('.feature-checkbox:checked').length;
+                const usagePercent = Math.round((usedFeatures / totalFeatures) * 100);
+                const waste = Math.round(cost * (1 - usedFeatures / totalFeatures));
+                
+                totalCost += cost;
+                totalWaste += waste;
+                
+                breakdownHTML += `
+                    <div style="background: white; padding: 20px; margin: 15px 0; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                        <h3>${toolNames[tool]}</h3>
+                        <div class="usage-chart">
+                            <div class="usage-used" style="width: ${usagePercent}%"></div>
+                            <div class="usage-unused" style="width: ${100 - usagePercent}%"></div>
+                        </div>
+                        <p>Using ${usedFeatures} of ${totalFeatures} features (${usagePercent}%)</p>
+                        <p>Annual cost: $${cost.toLocaleString()} | Waste: $${waste.toLocaleString()}</p>
+                    </div>
+                `;
+            });
+            
+            // Update results display
+            document.getElementById('totalSpend').textContent = `$${totalCost.toLocaleString()}`;
+            document.getElementById('totalWaste').textContent = `$${totalWaste.toLocaleString()}`;
+            document.getElementById('wastePercentage').textContent = `${Math.round((totalWaste / totalCost) * 100)}%`;
+            document.getElementById('toolBreakdown').innerHTML = breakdownHTML;
+            document.getElementById('immediateSavings').textContent = `$${Math.round(totalWaste * 0.8).toLocaleString()}`;
+            
+            // Show overlaps
+            let overlapHTML = '';
+            const foundOverlaps = new Set();
+            
+            document.querySelectorAll('.feature-checkbox:checked').forEach(cb => {
+                const feature = cb.dataset.feature;
+                if (overlapMap[feature] && !foundOverlaps.has(feature)) {
+                    foundOverlaps.add(feature);
+                    const label = cb.closest('.feature-item').querySelector('.feature-label').textContent;
+                    overlapHTML += `
+                        <div class="overlap-item">
+                            <strong>${label}</strong><br>
+                            Paying for this in: ${overlapMap[feature].join(' AND ')}
+                        </div>
+                    `;
+                }
+            });
+            
+            document.getElementById('overlapList').innerHTML = overlapHTML || '<p>No major overlaps detected based on your usage.</p>';
+            
+            window.scrollTo(0, 0);
+        }
+
+        async function exportResults() {
+            // Show loading state
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Sending Results...';
+            button.disabled = true;
+            
+            // Collect all the detailed data
+            const resultsData = {
+                timestamp: new Date().toISOString(),
+                
+                // Summary data - remove $ and commas properly
+                totalSpend: document.getElementById('totalSpend').textContent.replace(/\$/g, '').replace(/,/g, ''),
+                totalWaste: document.getElementById('totalWaste').textContent.replace(/\$/g, '').replace(/,/g, ''),
+                wastePercentage: document.getElementById('wastePercentage').textContent,
+                
+                // PC Recruiter
+                pcrecruiter_cost: document.getElementById('pcrecruiter-cost').value,
+                pcrecruiter_seats: document.getElementById('pcrecruiter-seats').value,
+                pcrecruiter_features_used: Array.from(document.querySelectorAll('[data-tool="pcrecruiter"] .feature-checkbox:checked'))
+                    .map(cb => cb.closest('.feature-item').querySelector('.feature-label').textContent).join('; '),
+                pcrecruiter_usage_percent: document.getElementById('pcrecruiter-usage').textContent,
+                pcrecruiter_waste: document.getElementById('pcrecruiter-waste').textContent.replace(/\$/g, '').replace(/,/g, ''),
+                
+                // Zoom Info
+                zoominfo_cost: document.getElementById('zoominfo-cost').value,
+                zoominfo_seats: document.getElementById('zoominfo-seats').value,
+                zoominfo_features_used: Array.from(document.querySelectorAll('[data-tool="zoominfo"] .feature-checkbox:checked'))
+                    .map(cb => cb.closest('.feature-item').querySelector('.feature-label').textContent).join('; '),
+                zoominfo_usage_percent: document.getElementById('zoominfo-usage').textContent,
+                zoominfo_waste: document.getElementById('zoominfo-waste').textContent.replace(/\$/g, '').replace(/,/g, ''),
+                
+                // Source Whale
+                sourcewhale_cost: document.getElementById('sourcewhale-cost').value,
+                sourcewhale_seats: document.getElementById('sourcewhale-seats').value,
+                sourcewhale_features_used: Array.from(document.querySelectorAll('[data-tool="sourcewhale"] .feature-checkbox:checked'))
+                    .map(cb => cb.closest('.feature-item').querySelector('.feature-label').textContent).join('; '),
+                sourcewhale_usage_percent: document.getElementById('sourcewhale-usage').textContent,
+                sourcewhale_waste: document.getElementById('sourcewhale-waste').textContent.replace(/\$/g, '').replace(/,/g, ''),
+                
+                // Monday.com
+                monday_cost: document.getElementById('monday-cost').value,
+                monday_seats: document.getElementById('monday-seats').value,
+                monday_features_used: Array.from(document.querySelectorAll('[data-tool="monday"] .feature-checkbox:checked'))
+                    .map(cb => cb.closest('.feature-item').querySelector('.feature-label').textContent).join('; '),
+                monday_usage_percent: document.getElementById('monday-usage').textContent,
+                monday_waste: document.getElementById('monday-waste').textContent.replace(/\$/g, '').replace(/,/g, ''),
+                
+                // Overlapping features
+                overlapping_features: Array.from(document.querySelectorAll('.feature-item.overlap .feature-checkbox:checked'))
+                    .map(cb => cb.closest('.feature-item').querySelector('.feature-label').textContent).join('; ')
+            };
+            
+            try {
+                // Send to Google Sheets via your Apps Script
+                const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxjebr9FkqwfaCm9juXRIPCZ04uubzU6MY--6YHVWh711a4Pnei7OHN_97P4XlUk30/exec';
+                
+                console.log('Sending tool audit data:', resultsData);
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(resultsData)
+                });
+                
+                // Show success message
+                const totalWaste = document.getElementById('totalWaste').textContent;
+                document.getElementById('resultsSection').innerHTML = `
+                    <div style="background: white; padding: 40px; border-radius: 16px; text-align: center;">
+                        <h2 style="color: #27ae60; margin-bottom: 20px;">✅ Analysis Saved!</h2>
+                        
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                            <p style="font-size: 1.2rem; margin-bottom: 10px;">You're wasting</p>
+                            <p style="font-size: 2.5rem; color: #e74c3c; font-weight: bold; margin: 10px 0;">${totalWaste}</p>
+                            <p style="font-size: 1.2rem;">per year on unused features</p>
+                        </div>
+                        
+                        <p style="font-size: 1.1rem; margin: 20px 0;">
+                            We've captured your tool usage data and will create a custom solution that:
+                        </p>
+                        
+                        <ul style="text-align: left; max-width: 500px; margin: 20px auto; line-height: 1.8;">
+                            <li>✓ Includes only the features you actually use</li>
+                            <li>✓ Eliminates duplicate functionality</li>
+                            <li>✓ Provides a single login for everything</li>
+                            <li>✓ Saves you ${totalWaste} annually</li>
+                        </ul>
+                        
+                        <p style="margin-top: 30px; color: #7f8c8d;">
+                            Expect our detailed proposal within 24 hours!
+                        </p>
+                        
+                        <button onclick="window.location.reload()" style="margin-top: 20px; padding: 12px 30px; background: #3498db; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            Start New Assessment
+                        </button>
+                    </div>
+                `;
+                
+                window.scrollTo(0, 0);
+                
+            } catch (error) {
+                console.error('Error submitting results:', error);
+                button.textContent = 'Error - Try Again';
+                button.disabled = false;
+                alert('There was an error saving your results. Please try again.');
+            }
+        }
+
+        // Initialize
+        updateToolStats();
+        updateProgress();
+    </script>
+</body>
+</html>
